@@ -32,7 +32,7 @@ if NASSL_INSTALL_DIR == '':
     raise Exception('Plaftorm ' + platform + ' ' + architecture()[0] + ' not supported.')
 
 
-def main():
+def build():
     # Create folder
     create_folder(TEST_DIR + '/nassl/')
     openssl_internal_dir = join(OPENSSL_INSTALL_DIR, "include", "openssl-internal")
@@ -81,4 +81,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    build()

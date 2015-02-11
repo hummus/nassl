@@ -5,7 +5,8 @@ from sys import platform
 from setup_config import NASSL_SETUP, NASSL_EXT_SETUP
 from buildAll_config import OPENSSL_DIR, ZLIB_DIR
 from buildAll_unix import OPENSSL_INSTALL_DIR
-
+from buildAll_unix import build
+from fetch_deps import fetch_and_extract_deps
 
 extra_compile_args = ['-Wall', '-Wno-deprecated-declarations']
 
@@ -27,4 +28,7 @@ unix_setup = NASSL_SETUP.copy()
 unix_setup.update({
     'ext_modules' : [Extension(**unix_ext_args)] })
 
-setup(**unix_setup)
+if __name__ == '__main__':
+    fetch_and_extract_deps()
+    build()
+    setup(**unix_setup)

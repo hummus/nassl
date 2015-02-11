@@ -1,3 +1,4 @@
+import os
 import sys
 import urllib2
 import tarfile
@@ -9,11 +10,18 @@ deps = [('http://zlib.net/zlib-1.2.8.tar.gz',
         ('https://www.openssl.org/source/openssl-1.0.1i.tar.gz',
          '74eed314fa2c93006df8d26cd9fc630a101abd76')]
 
+def basename_tar(_filename):
+    return os.path.basename(_filename).rsplit('.',2)[0]
+
 def fetch_and_extract_deps():
-    for dep in deps:
-        print "Fetching and extracting %s" % dep[0]
-        saved_file = fetch_file(dep[0], dep[1])
-        extract_tgz(saved_file)
+    for url,sha1 in deps:
+        basename = basename_tar(url)
+        if os.path.exists(basename):
+            print "Won't fetch, already exists: {}".format(url)
+        else:
+            print "Fetching and extracting %s" % basename
+            saved_file = fetch_file(url, sha1)
+            extract_tgz(saved_file)
 
 def fetch_file(url, trusted_digest, debug=2, insecure=False):
     url_obj = urllib2.urlopen(url)

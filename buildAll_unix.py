@@ -1,5 +1,5 @@
-#!/usr/bin/python2.7
-from platform import architecture
+#!/usr/bin/python
+from platform import architecture, mac_ver
 from sys import platform
 from os.path import join
 import distutils.util
@@ -32,53 +32,53 @@ if NASSL_INSTALL_DIR == '':
     raise Exception('Plaftorm ' + platform + ' ' + architecture()[0] + ' not supported.')
 
 
-def build():
+def build_deps(force=False):
     # Create folder
-    create_folder(TEST_DIR + '/nassl/')
+    #create_folder(TEST_DIR + '/nassl/')
     openssl_internal_dir = join(OPENSSL_INSTALL_DIR, "include", "openssl-internal")
     create_folder(openssl_internal_dir)
+    if force or not exists(join(ZLIB_DIR, 'libz.so')):
+        # Build Zlib
+        ZLIB_BUILD_TASKS = [
+            'CFLAGS="-fPIC" ./configure -static',
+            'make clean',
+            'make']
 
-    # Build Zlib
-    ZLIB_BUILD_TASKS = [
-        'CFLAGS="-fPIC" ./configure -static',
-        'make clean',
-        'make']
+        perform_build_task('ZLIB', ZLIB_BUILD_TASKS, ZLIB_DIR)
 
-    perform_build_task('ZLIB', ZLIB_BUILD_TASKS, ZLIB_DIR)
+    if force or not exists(OPENSSL_INSTALL_DIR):
+        # Build OpenSSL
+        OPENSSL_BUILD_TASKS = [
+            OPENSSL_CONF_CMD(OPENSSL_TARGET, OPENSSL_INSTALL_DIR, ZLIB_DIR,  ZLIB_DIR) + ' -fPIC',
+            'make clean',
+            #'make depend', # This makes building with Clang on OS X fail
+            'make',
+            'make test',
+            'make install_sw', # don't build documentation, else will fail on Debian
+            'mkdir -p %s'%(openssl_internal_dir),  # copy some internal headers for accessing EDH and ECDH parameters
+            'cp %s %s/'%(join(OPENSSL_DIR, 'e_os.h'), openssl_internal_dir),
+            'cp %s %s/'%(join(OPENSSL_DIR, 'ssl', 'ssl_locl.h'), openssl_internal_dir)]
 
-
-    # Build OpenSSL
-    OPENSSL_BUILD_TASKS = [
-        OPENSSL_CONF_CMD(OPENSSL_TARGET, OPENSSL_INSTALL_DIR, ZLIB_DIR,  ZLIB_DIR) + ' -fPIC',
-        'make clean',
-        #'make depend', # This makes building with Clang on OS X fail
-        'make',
-        'make test',
-        'make install_sw', # don't build documentation, else will fail on Debian
-        'mkdir -p %s'%(openssl_internal_dir),  # copy some internal headers for accessing EDH and ECDH parameters
-        'cp %s %s/'%(join(OPENSSL_DIR, 'e_os.h'), openssl_internal_dir),
-        'cp %s %s/'%(join(OPENSSL_DIR, 'ssl', 'ssl_locl.h'), openssl_internal_dir)]
-
-    perform_build_task('OPENSSL', OPENSSL_BUILD_TASKS, OPENSSL_DIR)
+        perform_build_task('OPENSSL', OPENSSL_BUILD_TASKS, OPENSSL_DIR)
 
 
     # Build nassl
-    NASSL_BUILD_TASKS = [
-        'python setup_unix.py build',
-        'cp -R ' + NASSL_INSTALL_DIR + '* ' + TEST_DIR]
+    # NASSL_BUILD_TASKS = [
+    #     'python setup_unix.py build',
+    #     'cp -R ' + NASSL_INSTALL_DIR + '* ' + TEST_DIR]
 
-    perform_build_task('NASSL', NASSL_BUILD_TASKS)
+    # perform_build_task('NASSL', NASSL_BUILD_TASKS)
 
 
     # Test nassl
     NASSL_TEST_TASKS = [
-        'python2.7 -m unittest discover --pattern=*_Tests.py']
+        'python -m unittest discover --pattern=*_Tests.py']
 
     perform_build_task('NASSL Tests', NASSL_TEST_TASKS, TEST_DIR)
 
 
-    print '=== All Done! Compiled module is available in ./test/nassl/ ==='
+    # print '=== All Done! Compiled module is available in ./test/nassl/ ==='
 
 
 if __name__ == "__main__":
-    build()
+    build_deps()

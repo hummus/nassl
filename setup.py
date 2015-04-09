@@ -59,7 +59,8 @@ unix_setup.update({
         'bdist_egg': bdist_egg,
         'build': build,
         'build_deps': build_deps,
-    }
+    },
+    'test_suite': "nassl.tests.as_test_suite"
 })
 
 

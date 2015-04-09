@@ -23,8 +23,6 @@
 # OS X
 .DS_Store
 
-test/nassl
-
 # S3cr3ts
 *.pem
 *.key
@@ -35,7 +33,6 @@ openssl-*/*
 zlib-*/*
 
 # Build result
-nassl/*
 MANIFEST
 build/*
 dist/*

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from platform import architecture, mac_ver
 from sys import platform
-from os.path import join
+from os.path import join, exists
 import distutils.util
 from buildAll_config import OPENSSL_CONF_CMD, BUILD_DIR, PY_VERSION, OPENSSL_DIR, ZLIB_DIR, TEST_DIR, perform_build_task, create_folder
 
@@ -60,24 +60,6 @@ def build_deps(force=False):
             'cp %s %s/'%(join(OPENSSL_DIR, 'ssl', 'ssl_locl.h'), openssl_internal_dir)]
 
         perform_build_task('OPENSSL', OPENSSL_BUILD_TASKS, OPENSSL_DIR)
-
-
-    # Build nassl
-    # NASSL_BUILD_TASKS = [
-    #     'python setup_unix.py build',
-    #     'cp -R ' + NASSL_INSTALL_DIR + '* ' + TEST_DIR]
-
-    # perform_build_task('NASSL', NASSL_BUILD_TASKS)
-
-
-    # Test nassl
-    NASSL_TEST_TASKS = [
-        'python -m unittest discover --pattern=*_Tests.py']
-
-    perform_build_task('NASSL Tests', NASSL_TEST_TASKS, TEST_DIR)
-
-
-    # print '=== All Done! Compiled module is available in ./test/nassl/ ==='
 
 
 if __name__ == "__main__":

@@ -3,8 +3,7 @@ from nassl import NASSL_VERSION
 NASSL_SETUP = {
     'name' : "nassl",
     'version' : NASSL_VERSION,
-    'package_dir' : {'nassl' : 'nassl'},
-    'py_modules' : ['nassl.__init__', 'nassl.SslClient', 'nassl.DebugSslClient', 'nassl.X509Certificate', 'nassl.OcspResponse'],
+    'packages': ['nassl', 'nassl.tests'],
     'description' : 'OpenSSL wrapper for SSLyze',
     'author' : 'Alban Diquet',
     'author_email' : 'nabla.c0d3@gmail.com',

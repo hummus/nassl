@@ -7,7 +7,7 @@ import hashlib
 # URLs and SHA384 of files we need
 deps = [('http://zlib.net/zlib-1.2.8.tar.gz',
          'a4d316c404ff54ca545ea71a27af7dbc29817088'),
-        ('https://www.openssl.org/source/openssl-1.0.2a.tar.gz',
+        ('https://www.openssl.org/source/old/1.0.2/openssl-1.0.2a.tar.gz',
          '46ecd325b8e587fa491f6bb02ad4a9fb9f382f5f')]
 
 def basename_tar(_filename):
